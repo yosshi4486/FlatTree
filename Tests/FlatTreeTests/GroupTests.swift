@@ -12,11 +12,11 @@ class GroupTests : XCTestCase {
     
     func testSlice() {
         let group = Group<String>(nodes: [
-            Node(item: "a"),
-            Node(item: "b"),
-            Node(item: "c"),
-            Node(item: "d"),
-            Node(item: "e"),
+            Node(item: "a", index: 0, indentationLevel: 0),
+            Node(item: "b", index: 0, indentationLevel: 0),
+            Node(item: "c", index: 0, indentationLevel: 0),
+            Node(item: "d", index: 0, indentationLevel: 0),
+            Node(item: "e", index: 0, indentationLevel: 0),
         ],
         indentationLevel: 1,
         firstNodeIndex: 4)
@@ -46,11 +46,11 @@ class GroupTests : XCTestCase {
     
     func testCount() {
         let group = Group<String>(nodes: [
-            Node(item: "a"),
-            Node(item: "b"),
-            Node(item: "c"),
-            Node(item: "d"),
-            Node(item: "e"),
+            Node(item: "a", index: 0, indentationLevel: 0),
+            Node(item: "b", index: 0, indentationLevel: 0),
+            Node(item: "c", index: 0, indentationLevel: 0),
+            Node(item: "d", index: 0, indentationLevel: 0),
+            Node(item: "e", index: 0, indentationLevel: 0),
         ],
         indentationLevel: 1,
         firstNodeIndex: 4)
@@ -60,11 +60,11 @@ class GroupTests : XCTestCase {
     
     func testIndex() {
         let group = Group<String>(nodes: [
-            Node(item: "a"),
-            Node(item: "b"),
-            Node(item: "c"),
-            Node(item: "d"),
-            Node(item: "e"),
+            Node(item: "a", index: 0, indentationLevel: 0),
+            Node(item: "b", index: 0, indentationLevel: 0),
+            Node(item: "c", index: 0, indentationLevel: 0),
+            Node(item: "d", index: 0, indentationLevel: 0),
+            Node(item: "e", index: 0, indentationLevel: 0),
         ],
         indentationLevel: 1,
         firstNodeIndex: 4)
@@ -78,19 +78,19 @@ class GroupTests : XCTestCase {
     
     func testJoin() {
         let group1 = Group<String>(nodes: [
-            Node(item: "a"),
-            Node(item: "b"),
-            Node(item: "c"),
-            Node(item: "d"),
-            Node(item: "e"),
+            Node(item: "a", index: 0, indentationLevel: 0),
+            Node(item: "b", index: 0, indentationLevel: 0),
+            Node(item: "c", index: 0, indentationLevel: 0),
+            Node(item: "d", index: 0, indentationLevel: 0),
+            Node(item: "e", index: 0, indentationLevel: 0),
         ],
         indentationLevel: 1,
         firstNodeIndex: 4)
         
         let group2 = Group<String>(nodes: [
-            Node(item: "f"),
-            Node(item: "g"),
-            Node(item: "h")
+            Node(item: "f", index: 0, indentationLevel: 0),
+            Node(item: "g", index: 0, indentationLevel: 0),
+            Node(item: "h", index: 0, indentationLevel: 0)
         ],
         indentationLevel: 1,
         firstNodeIndex: 8)
@@ -112,19 +112,19 @@ class GroupTests : XCTestCase {
     
     func testJoinFailure() {
         let group1 = Group<String>(nodes: [
-            Node(item: "a"),
-            Node(item: "b"),
-            Node(item: "c"),
-            Node(item: "d"),
-            Node(item: "e"),
+            Node(item: "a", index: 0, indentationLevel: 0),
+            Node(item: "b", index: 0, indentationLevel: 0),
+            Node(item: "c", index: 0, indentationLevel: 0),
+            Node(item: "d", index: 0, indentationLevel: 0),
+            Node(item: "e", index: 0, indentationLevel: 0),
         ],
         indentationLevel: 1,
         firstNodeIndex: 4)
         
         let group2 = Group<String>(nodes: [
-            Node(item: "f"),
-            Node(item: "g"),
-            Node(item: "h")
+            Node(item: "f", index: 0, indentationLevel: 0),
+            Node(item: "g", index: 0, indentationLevel: 0),
+            Node(item: "h", index: 0, indentationLevel: 0)
         ],
         indentationLevel: 2,
         firstNodeIndex: 8)
