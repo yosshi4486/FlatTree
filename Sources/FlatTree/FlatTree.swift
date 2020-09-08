@@ -184,4 +184,9 @@ extension FlatTree {
         items.forEach { hashTable[$0]?.isExpanded = true }
     }
     
+    /// Collapses the given items.
+    public func collapse(_ items: [ItemIdentifierType]) {
+        items.forEach { hashTable[$0]?.isExpanded = false }
+    }
+    
 }
