@@ -156,6 +156,7 @@ extension FlatTree {
     
 }
 
+// - MARK: Constant Time Methods
 extension FlatTree {
     
     /// Returns a level of the given item.
@@ -197,6 +198,7 @@ extension FlatTree {
     
 }
 
+// - MARK: Expand and Collapse
 extension FlatTree {
     
     /// Expands the given items.
