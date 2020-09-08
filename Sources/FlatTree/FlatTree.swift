@@ -103,20 +103,22 @@ extension FlatTree {
     
     /// For implement reindex,  we adopt 'marking' path nodes from changed node to root node, then do reindexing right subtrees.
     ///
-    /// - Complexity: always O(n)
+    /// - Complexity: always O(V+E) where V is a number of vertexes, E is a number of edges.
     func reindex() {
         var index: Int = 0
-        
-        func traverseDFSPreOrder(node: Node<ItemIdentifierType>) {
-            if node != containerRootNode {
-                node.index = index
-                index += 1
-            }
-            
-            node.children.forEach { traverseDFSPreOrder(node: $0) }
+        traverseDFSPreOrder(node: containerRootNode, index: &index)
+    }
+    
+    private func traverseDFSPreOrder(node: Node<ItemIdentifierType>, index: inout Int) {
+        if node != containerRootNode {
+            node.index = index
+            index += 1
         }
         
-        traverseDFSPreOrder(node: containerRootNode)
+        for child in node.children {
+            traverseDFSPreOrder(node: child, index: &index)
+        }
     }
+
     
 }
