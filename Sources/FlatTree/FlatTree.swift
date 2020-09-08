@@ -233,3 +233,38 @@ extension FlatTree {
     }
     
 }
+
+// - MARK: Optional Node's Operations
+extension FlatTree {
+    
+    /// Returns a node that stores the specified item.
+    public func node(of item: ItemIdentifierType) -> Node<ItemIdentifierType>? {
+        return hashTable[item]
+    }
+    
+    /// Inserts the given nodes before the given node.
+    ///
+    /// - Complexity: O(m+c) where m is the number of items you pass, c is the number of siblings of the given identifier.
+    public mutating func insert(_ nodes: [Node<ItemIdentifierType>], before node: Node<ItemIdentifierType>) {
+        guard let indexInParent = node.indexInParent else {
+            return
+        }
+        
+        node.parent?.children.insert(contentsOf: nodes, at: indexInParent)
+        hashTable.merge(zip(nodes.map({ $0.item }), nodes)) { (_, new) in new }
+    }
+    
+    /// Inserts the given nodes after the given node.
+    ///
+    /// - Complexity: O(m+c) where m is the number of items you pass, c is the number of siblings of the given identifier.
+    public mutating func insert(_ nodes: [Node<ItemIdentifierType>], after node: Node<ItemIdentifierType>) {
+        guard let indexInParent = node.indexInParent else {
+            return
+        }
+        
+        node.parent?.children.insert(contentsOf: nodes, at: indexInParent + 1)
+        hashTable.merge(zip(nodes.map({ $0.item }), nodes)) { (_, new) in new }
+    }
+
+    
+}
