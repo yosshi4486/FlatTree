@@ -8,28 +8,28 @@
 import Foundation
 
 /// A node of tree. It can behave as a subtree.
-final class Node<ItemIdentifierType> : Hashable where ItemIdentifierType : Hashable {
+public final class Node<ItemIdentifierType> : Hashable where ItemIdentifierType : Hashable {
    
     /// The identifier that identifies itself.
-    let id: UUID
+    public let id: UUID
     
     /// The actual content
-    let item: ItemIdentifierType!
+    public let item: ItemIdentifierType!
     
     /// The index in tree.
-    var index: Int = 0
+    public var index: Int = 0
     
     /// The indentation level of the node.
-    var indentationLevel: Int
+    public var indentationLevel: Int
     
     /// The value whether the node is expanded or collapsed.
-    var isExpanded: Bool = false
+    public var isExpanded: Bool = false
     
     /// The parrent of the node.
-    weak var parent: Node<ItemIdentifierType>?
+    public weak var parent: Node<ItemIdentifierType>?
     
     /// The children of the node.
-    var children: [Node<ItemIdentifierType>] = []
+    public var children: [Node<ItemIdentifierType>] = []
                     
     init(item: ItemIdentifierType,
          indentationLevel: Int,
@@ -52,11 +52,11 @@ final class Node<ItemIdentifierType> : Hashable where ItemIdentifierType : Hasha
         self.id = UUID()
     }
     
-    func hash(into hasher: inout Hasher) {
+    public func hash(into hasher: inout Hasher) {
         hasher.combine(id)
     }
     
-    static func == (lhs: Node, rhs: Node) -> Bool {
+    public static func == (lhs: Node, rhs: Node) -> Bool {
         return lhs.id == rhs.id
     }
     
@@ -68,7 +68,8 @@ final class Node<ItemIdentifierType> : Hashable where ItemIdentifierType : Hasha
 
 extension Node {
     
-    var indexInParent: Int? {
+    /// Returns an index in the parent.
+    public var indexInParent: Int? {
         guard let aParent = parent else {
             return nil
         }
@@ -76,7 +77,8 @@ extension Node {
         return aParent.children.firstIndex(of: self)
     }
     
-    func removeFromParent() {
+    /// Removes self from the parent.
+    public func removeFromParent() {
         guard let index = indexInParent else {
             return
         }
