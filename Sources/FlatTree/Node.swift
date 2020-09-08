@@ -22,6 +22,9 @@ final class Node<ItemIdentifierType> : Hashable where ItemIdentifierType : Hasha
     /// The indentation level of the node.
     var indentationLevel: Int
     
+    /// The value whether the node is expanded or collapsed.
+    var isExpanded: Bool = false
+    
     /// The parrent of the node.
     weak var parent: Node<ItemIdentifierType>?
     
@@ -45,6 +48,7 @@ final class Node<ItemIdentifierType> : Hashable where ItemIdentifierType : Hasha
         self.item = nil
         self.index = -1
         self.indentationLevel = -1
+        self.isExpanded = true
         self.id = UUID()
     }
     

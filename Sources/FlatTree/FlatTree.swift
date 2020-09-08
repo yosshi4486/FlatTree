@@ -111,8 +111,24 @@ struct FlatTree<ItemIdentifierType> where ItemIdentifierType : Hashable {
 extension FlatTree {
     
     /// - Complexity: O(n log n)
-    public var nodes: [Node<ItemIdentifierType>] { hashTable.sorted(by: { $0.value.index < $1.value.index }).map { $0.value } }
+    public var items: [ItemIdentifierType] {
+        return hashTable
+            .sorted(by: { $0.value.index < $1.value.index })
+            .map { $0.value.item }
+    }
 
+    public var rootItems: [ItemIdentifierType] {
+        return containerRootNode.children
+            .map { $0.item }
+    }
+    
+    public var visibleItems: [ItemIdentifierType] {
+        return hashTable
+            .filter({ isVisible($0.value.item) })
+            .sorted(by: { $0.value.index < $1.value.index })
+            .map({ $0.value.item })
+    }
+    
 }
 
 // - MARK: Reindex
@@ -137,5 +153,79 @@ extension FlatTree {
         }
     }
 
+    
+}
+
+extension FlatTree {
+    
+    /// Returns a level of the given item.
+    public func level(of item: ItemIdentifierType) -> Int? {
+        return hashTable[item]?.indentationLevel
+    }
+    
+    /// Returns a index of the given item.
+    public func index(of item: ItemIdentifierType) -> Int? {
+        return hashTable[item]?.index
+    }
+    
+    /// Returns a parent of the given item.
+    public func parent(of item: ItemIdentifierType) -> ItemIdentifierType? {
+        let node = hashTable[item]
+        
+        // Eliminate the container node.
+        if node?.parent == containerRootNode {
+            return nil
+        } else {
+            return node?.parent?.item
+        }
+    }
+    
+    /// Returns a value whether the tree contains the given item.
+    public func contains(_ item: ItemIdentifierType) -> Bool {
+        return hashTable[item] != nil
+    }
+    
+    /// Returns a value whether the item is expanded.
+    public func isExpanded(_ item: ItemIdentifierType) -> Bool {
+        return hashTable[item]?.isExpanded ?? false
+    }
+    
+    /// Returns a value whether the item is visible on screen.
+    public func isVisible(_ item: ItemIdentifierType) -> Bool {
+        return hashTable[item]?.parent?.isExpanded ?? false
+    }
+    
+}
+
+extension FlatTree {
+    
+    /// Expands the given items.
+    ///
+    /// - Precondition: The parent of the specified item shoud be expanded. If it doesn't, the program shoud be modified.
+    public func expand(_ items: [ItemIdentifierType]) {
+        for item in items {
+            guard let node = hashTable[item] else {
+                return
+            }
+            
+            precondition(node.parent?.isExpanded == true, "The parent shoud be expanded.")
+            node.isExpanded = true
+        }
+        
+    }
+    
+    /// Collapses the given items.
+    ///
+    /// - Precondition: The parent of the specified item shoud be expanded. If it doesn't, the program shoud be modified.
+    public func collapse(_ items: [ItemIdentifierType]) {
+        for item in items {
+            guard let node = hashTable[item] else {
+                return
+            }
+            
+            precondition(node.parent?.isExpanded == true, "The parent shoud be expanded.")
+            node.isExpanded = false
+        }
+    }
     
 }
