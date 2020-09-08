@@ -17,7 +17,7 @@ final class Node<ItemIdentifierType> : Hashable where ItemIdentifierType : Hasha
     let item: ItemIdentifierType!
     
     /// The index in tree.
-    var index: Int
+    var index: Int = 0
     
     /// The indentation level of the node.
     var indentationLevel: Int
@@ -27,49 +27,13 @@ final class Node<ItemIdentifierType> : Hashable where ItemIdentifierType : Hasha
     
     /// The children of the node.
     var children: [Node<ItemIdentifierType>] = []
-    
-    /// The value that indicates where the node needs reindexing.
-    var needsReindexing = false
-    
-    /// The last index of the substree.
-    var lastIndexOfSubtree: Int {
-        var result = index
-        
-        func traverse(node: Node<ItemIdentifierType>?) {
-            guard let aNode = node else {
-                return
-            }
-            result = aNode.index
-            traverse(node: aNode.children.last)
-        }
-        // O(d) where d is depth of the subtree.
-        traverse(node: children.last)
-        
-        return result
-    }
-    
-    /// The functions marks node to indicate needs like a `setNeedsDisplay` and `setNeedsLayout`
-    func setNeedsReindexing() {
-        needsReindexing = true
-        
-        func setNeedesReindexingToRoot(node: Node<ItemIdentifierType>?) {
-            guard let aNode = node, aNode.index != -1 else { // -1 is container node.
-                return
-            }
-            aNode.needsReindexing = true
-            setNeedesReindexingToRoot(node: aNode.parent)
-        }
-        setNeedesReindexingToRoot(node: parent)
-    }
-            
+                    
     init(item: ItemIdentifierType,
-         index: Int,
          indentationLevel: Int,
          id: UUID = .init(),
          parent: Node<ItemIdentifierType>? = nil,
          children: [Node<ItemIdentifierType>] = []) {
         self.item = item
-        self.index = index
         self.indentationLevel = indentationLevel
         self.id = id
         self.parent = parent
@@ -94,6 +58,26 @@ final class Node<ItemIdentifierType> : Hashable where ItemIdentifierType : Hasha
     
     static func empty() -> Node<ItemIdentifierType> {
         return self.init()
+    }
+    
+}
+
+extension Node {
+    
+    var indexInParent: Int? {
+        guard let aParent = parent else {
+            return nil
+        }
+        
+        return aParent.children.firstIndex(of: self)
+    }
+    
+    func removeFromParent() {
+        guard let index = indexInParent else {
+            return
+        }
+        
+        parent?.children.remove(at: index)
     }
     
 }

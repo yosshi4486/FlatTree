@@ -17,6 +17,7 @@ final class FlatTreeTests: XCTestCase {
     func testAppend() {
         var tree = FlatTree<String>()
         tree.append(["a", "b", "c"], to: nil)
+        tree.reindex()
         
         XCTAssertEqual(tree.nodes.count, 3)
         XCTAssertEqual(tree.nodes[0].item, "a")
@@ -24,7 +25,8 @@ final class FlatTreeTests: XCTestCase {
         XCTAssertEqual(tree.nodes[2].item, "c")
         
         tree.append(["d"], to: "a")
-        
+        tree.reindex()
+
         // Assert Count
         XCTAssertEqual(tree.nodes.count, 4)
 
@@ -50,7 +52,8 @@ final class FlatTreeTests: XCTestCase {
         
         // When
         tree.insert(["x", "y"], before: "d")
-                
+        tree.reindex()
+
         // Then
         // Assert Count
         XCTAssertEqual(tree.nodes.count, 6)
@@ -80,7 +83,8 @@ final class FlatTreeTests: XCTestCase {
         
         // When
         tree.insert(["x", "y"], before: "b")
-        
+        tree.reindex()
+
         // Then
         // Assert Count
         XCTAssertEqual(tree.nodes.count, 6)
@@ -109,7 +113,8 @@ final class FlatTreeTests: XCTestCase {
         
         // When
         tree.insert(["x", "y"], after: "d")
-        
+        tree.reindex()
+
         // Then
         // Assert Count
         XCTAssertEqual(tree.nodes.count, 6)
@@ -138,7 +143,8 @@ final class FlatTreeTests: XCTestCase {
         
         // When
         tree.insert(["x", "y"], after: "a")
-        
+        tree.reindex()
+
         // Then
         // Assert Count
         XCTAssertEqual(tree.nodes.count, 6)
@@ -165,7 +171,8 @@ final class FlatTreeTests: XCTestCase {
         
         // When
         tree.remove(["d", "b"])
-        
+        tree.reindex()
+
         // Then
         // Assert Count
         XCTAssertEqual(tree.nodes.count, 2)
@@ -195,7 +202,76 @@ final class FlatTreeTests: XCTestCase {
         // Then
         XCTAssertTrue(tree.nodes.isEmpty)
     }
+    
+    func testPerformanceAppendWithPerReindex() {
+        let inputSize = 14948
+        
+        var tree = FlatTree<UUID>()
+        var allNodes: [UUID] = []
+                                            
+        var parent = UUID()
+        tree.append([parent])
+        
+        print("Start setup datasources")
+        // Unbalanced and deep depth tree.
+        for i in 0...inputSize {
+            let startDate = Date()
+            let node = UUID()
+            tree.append([node], to: parent)
+            tree.reindex()
 
+            parent = node
+            allNodes.append(node)
+            
+            if i % 500 == 0 {
+                print("Current: \(String(format: "%.1f", Double(i) / Double(inputSize) * 100)) %")
+                
+                let elapsed = (Date().timeIntervalSince(startDate))
+                let formatedElapsed = String(format: "%.5f", elapsed)
+                
+                print("Time: \(formatedElapsed)")
+            }
+        }
+        print("Completed setup datasources")
+        
+        // average: 0.008sec
+        measure {
+            tree.append([UUID()], to: parent)
+        }
+        
+    }
+    
+    func testPerformanceAppendWithBatchUpdate() {
+        
+        let inputSize = 14948
+        var tree = FlatTree<UUID>()
+        var allNodes: [UUID] = []
+                                            
+        var parent = UUID()
+        tree.append([parent])
+        
+        let blockStatTime = Date()
+        tree.performBatchUpdates { passedTree in
+            // Unbalanced and deep depth tree.
+            for _ in 0...inputSize {
+                let node = UUID()
+                passedTree.append([node], to: parent)
+
+                parent = node
+                allNodes.append(node)
+            }
+        }
+        let blockElapsed = (Date().timeIntervalSince(blockStatTime))
+
+        // Appending 10 ^ 4 nodes take 80ms(0.08s)
+        XCTAssertTrue(blockElapsed < 0.08)
+        
+        // average 1.6ms
+        measure {
+            tree.append([UUID()], to: parent)
+        }
+        
+    }
 
     static var allTests = [
         ("testAppend", testAppend),
