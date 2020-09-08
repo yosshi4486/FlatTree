@@ -164,4 +164,9 @@ extension FlatTree {
         }
     }
     
+    /// Returns a value whether the tree contains the given item.
+    public func contains(_ item: ItemIdentifierType) -> Bool {
+        return hashTable[item] != nil
+    }
+    
 }

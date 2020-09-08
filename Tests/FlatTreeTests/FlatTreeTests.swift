@@ -327,6 +327,21 @@ final class FlatTreeTests: XCTestCase {
         XCTAssertEqual(tree.parent(of: "b"), nil)
         XCTAssertEqual(tree.parent(of: "c"), nil)
     }
+    
+    func testContains() {
+        var tree = FlatTree<String>()
+        tree.performBatchUpdates { (tree) in
+            tree.append(["a", "b", "c"], to: nil)
+            tree.append(["d"], to: "a")
+            tree.append(["f"], to: "d")
+        }
+                
+        XCTAssertEqual(tree.nodes.count, 5)
+                
+        // Then
+        XCTAssertTrue(tree.contains("f"))
+        XCTAssertFalse(tree.contains("z"))
+    }
 
     static var allTests = [
         ("testAppend", testAppend),
