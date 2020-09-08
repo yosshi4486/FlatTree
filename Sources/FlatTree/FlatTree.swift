@@ -169,4 +169,19 @@ extension FlatTree {
         return hashTable[item] != nil
     }
     
+    /// Returns a value whether the item is expanded.
+    public func isExpanded(_ item: ItemIdentifierType) -> Bool {
+        return hashTable[item]?.isExpanded ?? false
+    }
+    
+    
+}
+
+extension FlatTree {
+    
+    /// Expands the given items.
+    public func expand(_ items: [ItemIdentifierType]) {
+        items.forEach { hashTable[$0]?.isExpanded = true }
+    }
+    
 }
