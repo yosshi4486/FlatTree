@@ -219,42 +219,34 @@ final class FlatTreeTests: XCTestCase {
     func testPerformanceAppendWithBatchUpdate() {
         
         let inputSize = 14948
-        var tree = FlatTree<UUID>()
-        var allitems: [UUID] = []
-                                            
-        var parent = UUID()
-        tree.append([parent])
         
-        let blockStatTime = Date()
-        tree.performBatchUpdates { passedTree in
-            // Unbalanced and deep depth tree.
-            for _ in 0...inputSize {
-                let node = UUID()
-                passedTree.append([node], to: parent)
-
-                parent = node
-                allitems.append(node)
-            }
-        }
-        let blockElapsed = (Date().timeIntervalSince(blockStatTime))
-
-        // Appending 10 ^ 4 items shoud take less than 1000ms(0.1s)
-        XCTAssertTrue(blockElapsed < 0.1)
-        
-        // average 1.6ms
         measure {
-            tree.append([UUID()], to: parent)
+            var tree = FlatTree<UUID>()
+            var allitems: [UUID] = []
+                                                
+            var parent = UUID()
+            tree.append([parent])
+            tree.performBatchUpdates({ passedTree in
+                // Unbalanced and deep depth tree.
+                for _ in 0...inputSize {
+                    let item = UUID()
+                    passedTree.append([item], to: parent)
+
+                    parent = item
+                    allitems.append(item)
+                }
+            })
         }
         
     }
     
     func testLevel() {
         var tree = FlatTree<String>()
-        tree.performBatchUpdates { (tree) in
+        tree.performBatchUpdates({ (tree) in
             tree.append(["a", "b", "c"], to: nil)
             tree.append(["d"], to: "a")
             tree.append(["f"], to: "d")
-        }
+        })
 
         XCTAssertEqual(tree.items.count, 5)
         
@@ -268,11 +260,11 @@ final class FlatTreeTests: XCTestCase {
     
     func testIndex() {
         var tree = FlatTree<String>()
-        tree.performBatchUpdates { (tree) in
+        tree.performBatchUpdates({ (tree) in
             tree.append(["a", "b", "c"], to: nil)
             tree.append(["d"], to: "a")
             tree.append(["f"], to: "d")
-        }
+        })
                 
         XCTAssertEqual(tree.items.count, 5)
                 
@@ -287,11 +279,11 @@ final class FlatTreeTests: XCTestCase {
     
     func testParent() {
         var tree = FlatTree<String>()
-        tree.performBatchUpdates { (tree) in
+        tree.performBatchUpdates({ (tree) in
             tree.append(["a", "b", "c"], to: nil)
             tree.append(["d"], to: "a")
             tree.append(["f"], to: "d")
-        }
+        })
                 
         XCTAssertEqual(tree.items.count, 5)
                 
@@ -305,11 +297,11 @@ final class FlatTreeTests: XCTestCase {
     
     func testContains() {
         var tree = FlatTree<String>()
-        tree.performBatchUpdates { (tree) in
+        tree.performBatchUpdates({ (tree) in
             tree.append(["a", "b", "c"], to: nil)
             tree.append(["d"], to: "a")
             tree.append(["f"], to: "d")
-        }
+        })
                 
         XCTAssertEqual(tree.items.count, 5)
                 
@@ -320,11 +312,11 @@ final class FlatTreeTests: XCTestCase {
     
     func testExpandAndCollapse() {
         var tree = FlatTree<String>()
-        tree.performBatchUpdates { (tree) in
+        tree.performBatchUpdates({ (tree) in
             tree.append(["a", "b", "c"], to: nil)
             tree.append(["d"], to: "a")
             tree.append(["f"], to: "d")
-        }
+        })
                 
         XCTAssertEqual(tree.items.count, 5)
         
@@ -344,11 +336,11 @@ final class FlatTreeTests: XCTestCase {
     
     func testVisible() {
         var tree = FlatTree<String>()
-        tree.performBatchUpdates { (tree) in
+        tree.performBatchUpdates({ (tree) in
             tree.append(["a", "b", "c"], to: nil)
             tree.append(["d"], to: "a")
             tree.append(["f"], to: "d")
-        }
+        })
                 
         XCTAssertEqual(tree.items.count, 5)
         
