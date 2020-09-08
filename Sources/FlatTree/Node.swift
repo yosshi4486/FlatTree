@@ -61,3 +61,23 @@ final class Node<ItemIdentifierType> : Hashable where ItemIdentifierType : Hasha
     }
     
 }
+
+extension Node {
+    
+    var indexInParent: Int? {
+        guard let aParent = parent else {
+            return nil
+        }
+        
+        return aParent.children.firstIndex(of: self)
+    }
+    
+    func removeFromParent() {
+        guard let index = indexInParent else {
+            return
+        }
+        
+        parent?.children.remove(at: index)
+    }
+    
+}

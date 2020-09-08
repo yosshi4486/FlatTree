@@ -33,7 +33,8 @@ struct FlatTree<ItemIdentifierType> where ItemIdentifierType : Hashable {
             
         } else {
             let newNodes = children.enumerated().map({ Node<ItemIdentifierType>(item: $1,
-                                                                                indentationLevel: 0 )} )
+                                                                                indentationLevel: 0,
+                                                                                parent: containerRootNode)} )
             containerRootNode.children.append(contentsOf: newNodes)
             hashTable.merge(zip(children, newNodes)) { (_, new) in new }
             
@@ -100,24 +101,7 @@ struct FlatTree<ItemIdentifierType> where ItemIdentifierType : Hashable {
     
     mutating func remove(_ items: [ItemIdentifierType]) {
         for item in items {
-            
-            guard let aNode = hashTable[item] else {
-                return
-            }
-            
-            let aParent: Node<ItemIdentifierType> = {
-                if let parent = aNode.parent {
-                    return parent
-                } else {
-                    return containerRootNode
-                }
-            }()
-            
-            guard let index = aParent.children.firstIndex(of: aNode) else {
-                return
-            }
-                        
-            aParent.children.remove(at: index)
+            hashTable[item]?.removeFromParent()
             hashTable.removeValue(forKey: item)
         }
         
