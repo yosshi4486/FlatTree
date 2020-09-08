@@ -30,17 +30,12 @@ struct FlatTree<ItemIdentifierType> where ItemIdentifierType : Hashable {
                                                                                 parent: parentNode) })
             parentNode.children.append(contentsOf: newNodes)
             hashTable.merge(zip(children, newNodes)) { (_, new) in new }
-            
-            reindex()
-            
         } else {
             let newNodes = children.enumerated().map({ Node<ItemIdentifierType>(item: $1,
                                                                                 indentationLevel: 0,
                                                                                 parent: containerRootNode)} )
             containerRootNode.children.append(contentsOf: newNodes)
             hashTable.merge(zip(children, newNodes)) { (_, new) in new }
-            
-            reindex()
         }
     }
     
@@ -55,8 +50,6 @@ struct FlatTree<ItemIdentifierType> where ItemIdentifierType : Hashable {
                                                                          parent: node.parent)})
         node.parent?.children.insert(contentsOf: newNodes, at: indexInParent)
         hashTable.merge(zip(items, newNodes)) { (_, new) in new }
-        
-        reindex()
     }
     
     mutating func insert(_ items: [ItemIdentifierType], after identifier: ItemIdentifierType) {
@@ -70,8 +63,6 @@ struct FlatTree<ItemIdentifierType> where ItemIdentifierType : Hashable {
                                                                          parent: node.parent)})
         node.parent?.children.insert(contentsOf: newNodes, at: indexInParent + 1)
         hashTable.merge(zip(items, newNodes)) { (_, new) in new }
-        
-        reindex()
     }
     
     mutating func remove(_ items: [ItemIdentifierType]) {
@@ -79,13 +70,17 @@ struct FlatTree<ItemIdentifierType> where ItemIdentifierType : Hashable {
             hashTable[item]?.removeFromParent()
             hashTable.removeValue(forKey: item)
         }
-        
-        reindex()
     }
     
     mutating func removeAll() {
         containerRootNode.children = []
         hashTable.removeAll()
+    }
+    
+    mutating func performBatchUpdates(_ updates: ((inout FlatTree<ItemIdentifierType>)-> Void)?, completion: ((Bool) -> Void)? = nil) {
+        updates?(&self)
+        reindex()
+        completion?(true)
     }
     
 }
@@ -101,7 +96,7 @@ extension FlatTree {
 // - MARK: Reindex
 extension FlatTree {
     
-    /// For implement reindex,  we adopt 'marking' path nodes from changed node to root node, then do reindexing right subtrees.
+    /// Must call the method after calling a mutating methods if it isn't executed in `performBatchUpdates(_:completion:)`
     ///
     /// - Complexity: always O(V+E) where V is a number of vertexes, E is a number of edges.
     func reindex() {
