@@ -21,7 +21,10 @@ struct FlatTree<ItemIdentifierType> where ItemIdentifierType : Hashable {
     
     // - MARK: Basic operation of tree. Search, append, insert and delete.
     
-    mutating func append(_ children: [ItemIdentifierType], to parent: ItemIdentifierType? = nil) {
+    /// Appends children to the given parent. if the `parent` is nil, it becomes a root node.
+    ///
+    /// - Complexity: O(m) where m is the number of items you pass.
+    public mutating func append(_ children: [ItemIdentifierType], to parent: ItemIdentifierType? = nil) {
         
         if let aParent = parent, let parentNode = hashTable[aParent] {
             
@@ -39,7 +42,10 @@ struct FlatTree<ItemIdentifierType> where ItemIdentifierType : Hashable {
         }
     }
     
-    mutating func insert(_ items: [ItemIdentifierType], before identifier: ItemIdentifierType) {
+    /// Inserts the given items before the given identifier.
+    ///
+    /// - Complexity: O(m+c) where m is the number of items you pass, c is the number of siblings of the given identifier.
+    public mutating func insert(_ items: [ItemIdentifierType], before identifier: ItemIdentifierType) {
         
         guard let node = hashTable[identifier], let indexInParent = node.indexInParent else {
             return
@@ -52,7 +58,10 @@ struct FlatTree<ItemIdentifierType> where ItemIdentifierType : Hashable {
         hashTable.merge(zip(items, newNodes)) { (_, new) in new }
     }
     
-    mutating func insert(_ items: [ItemIdentifierType], after identifier: ItemIdentifierType) {
+    /// Inserts the given items after the given identifier.
+    ///
+    /// - Complexity: O(m+c) where m is the number of items you pass, c is the number of siblings of the given identifier.
+    public mutating func insert(_ items: [ItemIdentifierType], after identifier: ItemIdentifierType) {
         
         guard let node = hashTable[identifier], let indexInParent = node.indexInParent else {
             return
@@ -65,19 +74,32 @@ struct FlatTree<ItemIdentifierType> where ItemIdentifierType : Hashable {
         hashTable.merge(zip(items, newNodes)) { (_, new) in new }
     }
     
-    mutating func remove(_ items: [ItemIdentifierType]) {
+    /// Removes the given items.
+    ///
+    /// - Complexity: O(m) where m is the number of items you pass.
+    public mutating func remove(_ items: [ItemIdentifierType]) {
         for item in items {
             hashTable[item]?.removeFromParent()
             hashTable.removeValue(forKey: item)
         }
     }
     
-    mutating func removeAll() {
+    /// Removes all nodes.
+    ///
+    /// - Complexity: O(n) where n is the number of nodes in the tree.
+    public mutating func removeAll() {
         containerRootNode.children = []
         hashTable.removeAll()
     }
     
-    mutating func performBatchUpdates(_ updates: ((inout FlatTree<ItemIdentifierType>)-> Void)?, completion: ((Bool) -> Void)? = nil) {
+    /// Processes append, insert and remove operations as a group.
+    ///
+    /// Performing `reindex` is expensive therefore this method only call it once.
+    /// You should use this method in cases where you want to make multiple changes to the tree whenever possible.
+    ///
+    /// - Complexity: O(n) where n is the number of nodes in the tree.
+    public mutating func performBatchUpdates(_ updates: ((inout FlatTree<ItemIdentifierType>)-> Void)?,
+                                      completion: ((Bool) -> Void)? = nil) {
         updates?(&self)
         reindex()
         completion?(true)
@@ -89,17 +111,17 @@ struct FlatTree<ItemIdentifierType> where ItemIdentifierType : Hashable {
 extension FlatTree {
     
     /// - Complexity: O(n log n)
-    var nodes: [Node<ItemIdentifierType>] { hashTable.sorted(by: { $0.value.index < $1.value.index }).map { $0.value } }
+    public var nodes: [Node<ItemIdentifierType>] { hashTable.sorted(by: { $0.value.index < $1.value.index }).map { $0.value } }
 
 }
 
 // - MARK: Reindex
 extension FlatTree {
     
-    /// Must call the method after calling a mutating methods if it isn't executed in `performBatchUpdates(_:completion:)`
+    /// You must call the method after calling mutating methods if you don't execute it in `performBatchUpdates(_:completion:)`
     ///
-    /// - Complexity: always O(V+E) where V is a number of vertexes, E is a number of edges.
-    func reindex() {
+    /// - Complexity: O(n) where n is the number of nodes in the tree.
+    public func reindex() {
         var index: Int = 0
         traverseDFSPreOrder(node: containerRootNode, index: &index)
     }
