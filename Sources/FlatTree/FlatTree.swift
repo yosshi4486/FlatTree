@@ -5,10 +5,12 @@
 //  Created by seijin4486 on 2020/09/02.
 //
 
-/// A flat tree primary aim is providing constant time fast search to configure efficient single dimensional table structure.
+/// A flat tree primary aim is providing constant time fast search to configure  single dimensional table structure.
 ///
 /// To implement constant search, both tree structure and hashtable are used. Nodes would't keep their correct index even if there is only hashtable, so the tree is used to keep correct indexes.
 /// A flat tree needs to  reindex whenever a mutating operation e.g. append, insert and delete  is executed. Those operations cost O(n).
+///
+/// It might be called to NativeTree.
 struct FlatTree<ItemIdentifierType> where ItemIdentifierType : Hashable {
         
     /// The node acts only as a container that never references its item property. It is useful to traverse the tree.
@@ -44,59 +46,32 @@ struct FlatTree<ItemIdentifierType> where ItemIdentifierType : Hashable {
     
     mutating func insert(_ items: [ItemIdentifierType], before identifier: ItemIdentifierType) {
         
-        guard let node = hashTable[identifier] else {
+        guard let node = hashTable[identifier], let indexInParent = node.indexInParent else {
             return
         }
         
-        if let parentNode = node.parent, let indexInParent = parentNode.children.firstIndex(of: node) {
-                                    
-            let newNodes = items.enumerated().map({ Node<ItemIdentifierType>(item: $1,
-                                                                             indentationLevel: node.indentationLevel,
-                                                                             parent: parentNode)})
-            parentNode.children.insert(contentsOf: newNodes, at: indexInParent)
-            hashTable.merge(zip(items, newNodes)) { (_, new) in new }
-            
-            reindex()
-
-        } else if let indexInRoot = containerRootNode.children.firstIndex(of: node) {
-                        
-            let newNodes = items.enumerated().map({ Node<ItemIdentifierType>(item: $1,
-                                                                             indentationLevel: node.indentationLevel )})
-            containerRootNode.children.insert(contentsOf: newNodes, at: indexInRoot)
-            hashTable.merge(zip(items, newNodes)) { (_, new) in new }
-
-            reindex()
-
-        }
+        let newNodes = items.enumerated().map({ Node<ItemIdentifierType>(item: $1,
+                                                                         indentationLevel: node.indentationLevel,
+                                                                         parent: node.parent)})
+        node.parent?.children.insert(contentsOf: newNodes, at: indexInParent)
+        hashTable.merge(zip(items, newNodes)) { (_, new) in new }
         
+        reindex()
     }
     
     mutating func insert(_ items: [ItemIdentifierType], after identifier: ItemIdentifierType) {
         
-        guard let node = hashTable[identifier] else {
+        guard let node = hashTable[identifier], let indexInParent = node.indexInParent else {
             return
         }
-        
-        if let parentNode = node.parent, let indexInParent = parentNode.children.firstIndex(of: node) {
                                     
-            let newNodes = items.enumerated().map({ Node<ItemIdentifierType>(item: $1,
-                                                                             indentationLevel: node.indentationLevel,
-                                                                             parent: parentNode)})
-            parentNode.children.insert(contentsOf: newNodes, at: indexInParent + 1)
-            hashTable.merge(zip(items, newNodes)) { (_, new) in new }
-            
-            reindex()
-
-        } else if let indexInRoot = containerRootNode.children.firstIndex(of: node) {
-                                    
-            let newNodes = items.enumerated().map({ Node<ItemIdentifierType>(item: $1,
-                                                                             indentationLevel: node.indentationLevel )})
-            containerRootNode.children.insert(contentsOf: newNodes, at: indexInRoot + 1)
-            hashTable.merge(zip(items, newNodes)) { (_, new) in new }
-
-            reindex()
-        }
+        let newNodes = items.enumerated().map({ Node<ItemIdentifierType>(item: $1,
+                                                                         indentationLevel: node.indentationLevel,
+                                                                         parent: node.parent)})
+        node.parent?.children.insert(contentsOf: newNodes, at: indexInParent + 1)
+        hashTable.merge(zip(items, newNodes)) { (_, new) in new }
         
+        reindex()
     }
     
     mutating func remove(_ items: [ItemIdentifierType]) {
@@ -118,7 +93,7 @@ struct FlatTree<ItemIdentifierType> where ItemIdentifierType : Hashable {
 // - MARK: - Computed Properties
 extension FlatTree {
     
-    /// - Complexity: O(n)
+    /// - Complexity: O(n log n)
     var nodes: [Node<ItemIdentifierType>] { hashTable.sorted(by: { $0.value.index < $1.value.index }).map { $0.value } }
 
 }
