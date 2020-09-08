@@ -139,3 +139,12 @@ extension FlatTree {
 
     
 }
+
+extension FlatTree {
+    
+    /// Returns a level of the given item.
+    public func level(of item: ItemIdentifierType) -> Int? {
+        return hashTable[item]?.indentationLevel
+    }
+    
+}
