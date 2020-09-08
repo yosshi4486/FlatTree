@@ -19,27 +19,23 @@ final class FlatTreeTests: XCTestCase {
         tree.append(["a", "b", "c"], to: nil)
         tree.reindex()
         
-        XCTAssertEqual(tree.nodes.count, 3)
-        XCTAssertEqual(tree.nodes[0].item, "a")
-        XCTAssertEqual(tree.nodes[1].item, "b")
-        XCTAssertEqual(tree.nodes[2].item, "c")
+        XCTAssertEqual(tree.items.count, 3)
+        XCTAssertEqual(tree.items[0], "a")
+        XCTAssertEqual(tree.items[1], "b")
+        XCTAssertEqual(tree.items[2], "c")
         
         tree.append(["d"], to: "a")
         tree.reindex()
 
         // Assert Count
-        XCTAssertEqual(tree.nodes.count, 4)
+        XCTAssertEqual(tree.items.count, 4)
 
         // Assert Item
-        XCTAssertEqual(tree.nodes[0].item, "a")
-        XCTAssertEqual(tree.nodes[1].item, "d")
-        XCTAssertEqual(tree.nodes[2].item, "b")
-        XCTAssertEqual(tree.nodes[3].item, "c")
+        XCTAssertEqual(tree.items[0], "a")
+        XCTAssertEqual(tree.items[1], "d")
+        XCTAssertEqual(tree.items[2], "b")
+        XCTAssertEqual(tree.items[3], "c")
         
-        // Assert Index
-        for (index, node) in tree.nodes.enumerated() {
-            XCTAssertEqual(node.index, index)
-        }
     }
     
     /// - Precondition: testAppend is passed
@@ -56,21 +52,17 @@ final class FlatTreeTests: XCTestCase {
 
         // Then
         // Assert Count
-        XCTAssertEqual(tree.nodes.count, 6)
+        XCTAssertEqual(tree.items.count, 6)
 
         // Assert Item
         // dbのindex振りなおしが出来てない。
-        XCTAssertEqual(tree.nodes[0].item, "a")
-        XCTAssertEqual(tree.nodes[1].item, "x")
-        XCTAssertEqual(tree.nodes[2].item, "y")
-        XCTAssertEqual(tree.nodes[3].item, "d")
-        XCTAssertEqual(tree.nodes[4].item, "b")
-        XCTAssertEqual(tree.nodes[5].item, "c")
+        XCTAssertEqual(tree.items[0], "a")
+        XCTAssertEqual(tree.items[1], "x")
+        XCTAssertEqual(tree.items[2], "y")
+        XCTAssertEqual(tree.items[3], "d")
+        XCTAssertEqual(tree.items[4], "b")
+        XCTAssertEqual(tree.items[5], "c")
         
-        // Assert Index
-        for (index, node) in tree.nodes.enumerated() {
-            XCTAssertEqual(node.index, index)
-        }
     }
     
     /// - Precondition: testAppend is passed
@@ -87,20 +79,16 @@ final class FlatTreeTests: XCTestCase {
 
         // Then
         // Assert Count
-        XCTAssertEqual(tree.nodes.count, 6)
+        XCTAssertEqual(tree.items.count, 6)
 
         // Assert Item
-        XCTAssertEqual(tree.nodes[0].item, "a")
-        XCTAssertEqual(tree.nodes[1].item, "d")
-        XCTAssertEqual(tree.nodes[2].item, "x")
-        XCTAssertEqual(tree.nodes[3].item, "y")
-        XCTAssertEqual(tree.nodes[4].item, "b")
-        XCTAssertEqual(tree.nodes[5].item, "c")
+        XCTAssertEqual(tree.items[0], "a")
+        XCTAssertEqual(tree.items[1], "d")
+        XCTAssertEqual(tree.items[2], "x")
+        XCTAssertEqual(tree.items[3], "y")
+        XCTAssertEqual(tree.items[4], "b")
+        XCTAssertEqual(tree.items[5], "c")
         
-        // Assert Index
-        for (index, node) in tree.nodes.enumerated() {
-            XCTAssertEqual(node.index, index)
-        }
     }
 
     /// - Precondition: testAppend is passed
@@ -117,20 +105,16 @@ final class FlatTreeTests: XCTestCase {
 
         // Then
         // Assert Count
-        XCTAssertEqual(tree.nodes.count, 6)
+        XCTAssertEqual(tree.items.count, 6)
 
         // Assert Item
-        XCTAssertEqual(tree.nodes[0].item, "a")
-        XCTAssertEqual(tree.nodes[1].item, "d")
-        XCTAssertEqual(tree.nodes[2].item, "x")
-        XCTAssertEqual(tree.nodes[3].item, "y")
-        XCTAssertEqual(tree.nodes[4].item, "b")
-        XCTAssertEqual(tree.nodes[5].item, "c")
+        XCTAssertEqual(tree.items[0], "a")
+        XCTAssertEqual(tree.items[1], "d")
+        XCTAssertEqual(tree.items[2], "x")
+        XCTAssertEqual(tree.items[3], "y")
+        XCTAssertEqual(tree.items[4], "b")
+        XCTAssertEqual(tree.items[5], "c")
         
-        // Assert Index
-        for (index, node) in tree.nodes.enumerated() {
-            XCTAssertEqual(node.index, index)
-        }
     }
     
     /// - Precondition: testAppend is passed
@@ -147,20 +131,16 @@ final class FlatTreeTests: XCTestCase {
 
         // Then
         // Assert Count
-        XCTAssertEqual(tree.nodes.count, 6)
+        XCTAssertEqual(tree.items.count, 6)
 
         // Assert Item
-        XCTAssertEqual(tree.nodes[0].item, "a")
-        XCTAssertEqual(tree.nodes[1].item, "d")
-        XCTAssertEqual(tree.nodes[2].item, "x")
-        XCTAssertEqual(tree.nodes[3].item, "y")
-        XCTAssertEqual(tree.nodes[4].item, "b")
-        XCTAssertEqual(tree.nodes[5].item, "c")
+        XCTAssertEqual(tree.items[0], "a")
+        XCTAssertEqual(tree.items[1], "d")
+        XCTAssertEqual(tree.items[2], "x")
+        XCTAssertEqual(tree.items[3], "y")
+        XCTAssertEqual(tree.items[4], "b")
+        XCTAssertEqual(tree.items[5], "c")
         
-        // Assert Index
-        for (index, node) in tree.nodes.enumerated() {
-            XCTAssertEqual(node.index, index)
-        }
     }
     
     func testDeleteItems() {
@@ -175,17 +155,11 @@ final class FlatTreeTests: XCTestCase {
 
         // Then
         // Assert Count
-        XCTAssertEqual(tree.nodes.count, 2)
+        XCTAssertEqual(tree.items.count, 2)
 
         // Assert Item
-        XCTAssertEqual(tree.nodes[0].item, "a")
-        XCTAssertEqual(tree.nodes[1].item, "c")
-        
-        // Assert Index
-        for (index, node) in tree.nodes.enumerated() {
-            XCTAssertEqual(node.index, index)
-        }
-
+        XCTAssertEqual(tree.items[0], "a")
+        XCTAssertEqual(tree.items[1], "c")
     }
     
     func testRemoveAll() {
@@ -194,58 +168,59 @@ final class FlatTreeTests: XCTestCase {
         tree.append(["a", "b", "c"], to: nil)
         tree.append(["d"], to: "a")
         
-        XCTAssertEqual(tree.nodes.count, 4)
+        XCTAssertEqual(tree.items.count, 4)
         
         // When
         tree.removeAll()
         
         // Then
-        XCTAssertTrue(tree.nodes.isEmpty)
+        XCTAssertTrue(tree.items.isEmpty)
     }
     
-    func testPerformanceAppendWithPerReindex() {
-        let inputSize = 14948
-        
-        var tree = FlatTree<UUID>()
-        var allNodes: [UUID] = []
-                                            
-        var parent = UUID()
-        tree.append([parent])
-        
-        print("Start setup datasources")
-        // Unbalanced and deep depth tree.
-        for i in 0...inputSize {
-            let startDate = Date()
-            let node = UUID()
-            tree.append([node], to: parent)
-            tree.reindex()
-
-            parent = node
-            allNodes.append(node)
-            
-            if i % 500 == 0 {
-                print("Current: \(String(format: "%.1f", Double(i) / Double(inputSize) * 100)) %")
-                
-                let elapsed = (Date().timeIntervalSince(startDate))
-                let formatedElapsed = String(format: "%.5f", elapsed)
-                
-                print("Time: \(formatedElapsed)")
-            }
-        }
-        print("Completed setup datasources")
-        
-        // average: 0.008sec
-        measure {
-            tree.append([UUID()], to: parent)
-        }
-        
-    }
+    
+//    func testPerformanceAppendWithPerReindex() {
+//        let inputSize = 14948
+//
+//        var tree = FlatTree<UUID>()
+//        var allitems: [UUID] = []
+//
+//        var parent = UUID()
+//        tree.append([parent])
+//
+//        print("Start setup datasources")
+//        // Unbalanced and deep depth tree.
+//        for i in 0...inputSize {
+//            let startDate = Date()
+//            let node = UUID()
+//            tree.append([node], to: parent)
+//            tree.reindex()
+//
+//            parent = node
+//            allitems.append(node)
+//
+//            if i % 500 == 0 {
+//                print("Current: \(String(format: "%.1f", Double(i) / Double(inputSize) * 100)) %")
+//
+//                let elapsed = (Date().timeIntervalSince(startDate))
+//                let formatedElapsed = String(format: "%.5f", elapsed)
+//
+//                print("Time: \(formatedElapsed)")
+//            }
+//        }
+//        print("Completed setup datasources")
+//
+//        // average: 0.008sec
+//        measure {
+//            tree.append([UUID()], to: parent)
+//        }
+//
+//    }
     
     func testPerformanceAppendWithBatchUpdate() {
         
         let inputSize = 14948
         var tree = FlatTree<UUID>()
-        var allNodes: [UUID] = []
+        var allitems: [UUID] = []
                                             
         var parent = UUID()
         tree.append([parent])
@@ -258,12 +233,12 @@ final class FlatTreeTests: XCTestCase {
                 passedTree.append([node], to: parent)
 
                 parent = node
-                allNodes.append(node)
+                allitems.append(node)
             }
         }
         let blockElapsed = (Date().timeIntervalSince(blockStatTime))
 
-        // Appending 10 ^ 4 nodes shoud take less than 1000ms(0.1s)
+        // Appending 10 ^ 4 items shoud take less than 1000ms(0.1s)
         XCTAssertTrue(blockElapsed < 0.1)
         
         // average 1.6ms
@@ -281,7 +256,7 @@ final class FlatTreeTests: XCTestCase {
             tree.append(["f"], to: "d")
         }
 
-        XCTAssertEqual(tree.nodes.count, 5)
+        XCTAssertEqual(tree.items.count, 5)
         
         XCTAssertEqual(tree.level(of: "a"), 0)
         XCTAssertEqual(tree.level(of: "d"), 1)
@@ -299,7 +274,7 @@ final class FlatTreeTests: XCTestCase {
             tree.append(["f"], to: "d")
         }
                 
-        XCTAssertEqual(tree.nodes.count, 5)
+        XCTAssertEqual(tree.items.count, 5)
                 
         // Then
         XCTAssertEqual(tree.index(of: "a"), 0)
@@ -318,7 +293,7 @@ final class FlatTreeTests: XCTestCase {
             tree.append(["f"], to: "d")
         }
                 
-        XCTAssertEqual(tree.nodes.count, 5)
+        XCTAssertEqual(tree.items.count, 5)
                 
         // Then
         XCTAssertEqual(tree.parent(of: "a"), nil)
@@ -336,7 +311,7 @@ final class FlatTreeTests: XCTestCase {
             tree.append(["f"], to: "d")
         }
                 
-        XCTAssertEqual(tree.nodes.count, 5)
+        XCTAssertEqual(tree.items.count, 5)
                 
         // Then
         XCTAssertTrue(tree.contains("f"))
@@ -351,7 +326,7 @@ final class FlatTreeTests: XCTestCase {
             tree.append(["f"], to: "d")
         }
                 
-        XCTAssertEqual(tree.nodes.count, 5)
+        XCTAssertEqual(tree.items.count, 5)
         
         // Expand
         tree.expand(["a", "b"])
@@ -375,7 +350,7 @@ final class FlatTreeTests: XCTestCase {
             tree.append(["f"], to: "d")
         }
                 
-        XCTAssertEqual(tree.nodes.count, 5)
+        XCTAssertEqual(tree.items.count, 5)
         
         tree.expand(["a"])
         XCTAssertTrue(tree.isVisible("a"))

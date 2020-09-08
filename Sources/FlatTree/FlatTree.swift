@@ -111,8 +111,24 @@ struct FlatTree<ItemIdentifierType> where ItemIdentifierType : Hashable {
 extension FlatTree {
     
     /// - Complexity: O(n log n)
-    public var nodes: [Node<ItemIdentifierType>] { hashTable.sorted(by: { $0.value.index < $1.value.index }).map { $0.value } }
+    public var items: [ItemIdentifierType] {
+        return hashTable
+            .sorted(by: { $0.value.index < $1.value.index })
+            .map { $0.value.item }
+    }
 
+    public var rootItems: [ItemIdentifierType] {
+        return containerRootNode.children
+            .map { $0.item }
+    }
+    
+    public var visibleItems: [ItemIdentifierType] {
+        return hashTable
+            .filter({ isVisible($0.value.item) })
+            .sorted(by: { $0.value.index < $1.value.index })
+            .map({ $0.value.item })
+    }
+    
 }
 
 // - MARK: Reindex
