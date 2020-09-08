@@ -152,4 +152,16 @@ extension FlatTree {
         return hashTable[item]?.index
     }
     
+    /// Returns a parent of the given item.
+    public func parent(of item: ItemIdentifierType) -> ItemIdentifierType? {
+        let node = hashTable[item]
+        
+        // Eliminate the container node.
+        if node?.parent == containerRootNode {
+            return nil
+        } else {
+            return node?.parent?.item
+        }
+    }
+    
 }
