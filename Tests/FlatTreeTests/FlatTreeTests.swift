@@ -263,8 +263,8 @@ final class FlatTreeTests: XCTestCase {
         }
         let blockElapsed = (Date().timeIntervalSince(blockStatTime))
 
-        // Appending 10 ^ 4 nodes take 80ms(0.08s)
-        XCTAssertTrue(blockElapsed < 0.08)
+        // Appending 10 ^ 4 nodes shoud take less than 1000ms(0.1s)
+        XCTAssertTrue(blockElapsed < 0.1)
         
         // average 1.6ms
         measure {
