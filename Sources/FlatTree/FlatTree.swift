@@ -147,4 +147,9 @@ extension FlatTree {
         return hashTable[item]?.indentationLevel
     }
     
+    /// Returns a index of the given item.
+    public func index(of item: ItemIdentifierType) -> Int? {
+        return hashTable[item]?.index
+    }
+    
 }

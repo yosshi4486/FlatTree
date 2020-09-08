@@ -290,7 +290,23 @@ final class FlatTreeTests: XCTestCase {
         XCTAssertEqual(tree.level(of: "c"), 0)
 
     }
+    
+    func testIndex() {
+        var tree = FlatTree<String>()
+        tree.performBatchUpdates { (tree) in
+            tree.append(["a", "b", "c"], to: nil)
+            tree.append(["d"], to: "a")
+            tree.append(["f"], to: "d")
+        }
+                
+        XCTAssertEqual(tree.nodes.count, 5)
+                
         // Then
+        XCTAssertEqual(tree.index(of: "a"), 0)
+        XCTAssertEqual(tree.index(of: "d"), 1)
+        XCTAssertEqual(tree.index(of: "f"), 2)
+        XCTAssertEqual(tree.index(of: "b"), 3)
+        XCTAssertEqual(tree.index(of: "c"), 4)
 
     }
 
