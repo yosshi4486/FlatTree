@@ -11,13 +11,15 @@
 /// A flat tree needs to  reindex whenever a mutating operation e.g. append, insert and delete  is executed. Those operations cost O(n).
 ///
 /// It might be called to NativeTree.
-struct FlatTree<ItemIdentifierType> where ItemIdentifierType : Hashable {
+public struct FlatTree<ItemIdentifierType> where ItemIdentifierType : Hashable {
         
     /// The node acts only as a container that never references its item property. It is useful to traverse the tree.
     private var containerRootNode: Node<ItemIdentifierType> = Node.empty()
     
     /// The hash table for providing constant time search.
     private var hashTable: [ItemIdentifierType : Node<ItemIdentifierType>] = [:]
+    
+    public init() { }
     
     // - MARK: Basic operation of tree. Search, append, insert and delete.
     
