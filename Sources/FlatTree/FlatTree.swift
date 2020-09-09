@@ -156,17 +156,21 @@ extension FlatTree {
     /// - Complexity: O(n) where n is the number of nodes in the tree.
     public func reindex() {
         var index: Int = 0
-        traverseDFSPreOrder(node: containerRootNode, index: &index)
-    }
-    
-    private func traverseDFSPreOrder(node: Node<ItemIdentifierType>, index: inout Int) {
-        if node != containerRootNode {
+        traverseDFSPreOrder(node: containerRootNode, { node in
             node.index = index
             index += 1
+        })
+    }
+    
+    private func traverseDFSPreOrder(node: Node<ItemIdentifierType>,
+                                     _ body: (Node<ItemIdentifierType>) throws -> Void) rethrows {
+        
+        if node != containerRootNode {
+            try body(node)
         }
         
         for child in node.children {
-            traverseDFSPreOrder(node: child, index: &index)
+            try traverseDFSPreOrder(node: child, body)
         }
     }
 
