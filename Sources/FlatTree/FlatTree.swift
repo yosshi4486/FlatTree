@@ -261,6 +261,21 @@ extension FlatTree {
         return hashTable[item]
     }
     
+    /// Replaces children of the specified parent to the other specified tree's root nodes.
+    public mutating func replace(childrenOf parent: ItemIdentifierType, using otherTree: FlatTree<ItemIdentifierType>) {
+        guard let parentNode = node(of: parent) else {
+            return
+        }
+        
+        // Remove nodes from hashtable
+        traverseDFSPreOrder(node: parentNode) { (node) in
+            remove([node.item])
+        }
+        
+        parentNode.children = otherTree.rootNodes
+        hashTable.merge(zip(otherTree.rootNodes.map({ $0.item }), otherTree.rootNodes)) { (_, new) in new }
+    }
+    
     /// Inserts the given nodes before the given node.
     ///
     /// - Complexity: O(m+c) where m is the number of items you pass, c is the number of siblings of the given identifier.
