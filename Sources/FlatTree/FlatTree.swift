@@ -5,6 +5,8 @@
 //  Created by seijin4486 on 2020/09/02.
 //
 
+import Foundation
+
 /// A flat tree primary aim is providing constant time fast search to configure  single dimensional table structure.
 ///
 /// To implement constant search, both tree structure and hashtable are used. Nodes would't keep their correct index even if there is only hashtable, so the tree is used to keep correct indexes.
@@ -12,12 +14,79 @@
 ///
 /// It might be called to NativeTree.
 public struct FlatTree<ItemIdentifierType> where ItemIdentifierType : Hashable {
+    
+    final class Group : Hashable {
         
+        let id: UUID = .init()
+        var index: Int
+        var indentationLevel: Int
+        var isExpanded: Bool
+        var items: [Item]
+        
+        init(index: Int, indentationLevel: Int, isExpanded: Bool, items: [Item]) {
+            self.index = index
+            self.indentationLevel = indentationLevel
+            self.isExpanded = isExpanded
+            self.items = items
+        }
+        
+        func split(after itemIdentifier: ItemIdentifierType) -> Group? {
+            guard let index = items.firstIndex(where: { $0.value == itemIdentifier }) else {
+                return nil
+            }
+            
+            let group = Group(index: -1,
+                              indentationLevel: indentationLevel,
+                              isExpanded: isExpanded,
+                              items: Array(items[(index+1)...]))
+            items.removeSubrange((index+1)...)
+            return group
+        }
+        
+        func hash(into hasher: inout Hasher) {
+            hasher.combine(id)
+        }
+        
+        static func == (lhs: FlatTree.Group, rhs: FlatTree.Group) -> Bool {
+            return lhs.id == rhs.id
+        }
+        
+        var indexForNextGroup: Int {
+            return index + items.count
+        }
+
+    }
+    
+    final class Item : Hashable {
+        
+        let id: UUID = .init()
+        var indexInGroup: Int
+        var value: ItemIdentifierType
+        
+        init(indexInGroup: Int, value: ItemIdentifierType) {
+            self.indexInGroup = indexInGroup
+            self.value = value
+        }
+
+        func hash(into hasher: inout Hasher) {
+            hasher.combine(id)
+        }
+        
+        static func == (lhs: FlatTree.Item, rhs: FlatTree.Item) -> Bool {
+            return lhs.id == rhs.id
+        }
+
+    }
+    
     /// The node acts only as a container that never references its item property. It is useful to traverse the tree.
     private var containerRootNode: Node<ItemIdentifierType> = Node.empty()
     
     /// The hash table for providing constant time search.
     private var hashTable: [ItemIdentifierType : Node<ItemIdentifierType>] = [:]
+    
+    private var groupTable: [ItemIdentifierType : Group] = [:]
+    
+    private var groups: [Group] = []
     
     public init() { }
     
@@ -28,20 +97,67 @@ public struct FlatTree<ItemIdentifierType> where ItemIdentifierType : Hashable {
     /// - Complexity: O(m) where m is the number of items you pass.
     public mutating func append(_ children: [ItemIdentifierType], to parent: ItemIdentifierType? = nil) {
         
-        if let aParent = parent, let parentNode = hashTable[aParent] {
+        if let parentItemIdentifier = parent,
+           let parentGroup = groupTable[parentItemIdentifier],
+           let firstChild = children.first {
             
-            let newNodes = children.enumerated().map({ Node<ItemIdentifierType>(item: $1,
-                                                                                indentationLevel: parentNode.indentationLevel + 1,
-                                                                                parent: parentNode) })
-            parentNode.children.append(contentsOf: newNodes)
-            hashTable.merge(zip(children, newNodes)) { (_, new) in new }
+            if let group = groupTable[firstChild] {
+                let startIndex = group.items.count
+                group.items.append(contentsOf: children.enumerated().map({ Item(indexInGroup: startIndex + $0, value: $1) }))
+            } else {
+                let items = children.enumerated().map({ Item(indexInGroup: $0, value: $1) })
+                let newGroup = Group(index: -1,
+                                  indentationLevel: 0,
+                                  isExpanded: false,
+                                  items: items)
+                
+                guard let nextGroup = parentGroup.split(after: parentItemIdentifier) else {
+                    fatalError()
+                }
+                
+                guard let parentIndex = groups.firstIndex(of: parentGroup) else {
+                    fatalError()
+                }
+                
+                groups.insert(newGroup, at: parentIndex+1)
+                groups.insert(nextGroup, at: parentIndex+2)
+                
+                groupTable.merge(zip(children, Array(repeating: newGroup, count: children.count))) { (_, new) in new }
+                
+                // Override corresponded group by identifiers.
+                groupTable.merge(zip(nextGroup.items.map({ $0.value}), Array(repeating: nextGroup, count: nextGroup.items.count))) { (_, new) in new }
+                
+                reindex(fromGroupIndex: parentIndex+1)
+            }
         } else {
-            let newNodes = children.enumerated().map({ Node<ItemIdentifierType>(item: $1,
-                                                                                indentationLevel: 0,
-                                                                                parent: containerRootNode)} )
-            containerRootNode.children.append(contentsOf: newNodes)
-            hashTable.merge(zip(children, newNodes)) { (_, new) in new }
+            
+            let newIndex: Int = {
+                // If no previous group, it is first group.
+                if let previousGroup = groups.last {
+                    return previousGroup.indexForNextGroup
+                } else {
+                    return 0
+                }
+            }()
+            
+            let items = children.enumerated().map({ Item(indexInGroup: $0, value: $1)} )
+            let group = Group(index: newIndex,
+                              indentationLevel: 0,
+                              isExpanded: false,
+                              items: items)
+            groups.append(group)
+            groupTable.merge(zip(children, Array(repeating: group, count: children.count))) { (_, new) in new }
         }
+    }
+    
+    func reindex(fromGroupIndex index: Int) {
+        
+        for i in index..<groups.count {
+            let previousGroup = groups[i - 1]
+            let group = groups[i]
+            group.index = previousGroup.indexForNextGroup
+        }
+        
     }
     
     /// Inserts the given items before the given identifier.
@@ -134,7 +250,7 @@ extension FlatTree {
     
     /// - Complexity: O(n log n)
     public var items: [ItemIdentifierType] {
-        return nodes.map({ $0.item })
+        groups.reduce(into: [ItemIdentifierType]()) { $0.append(contentsOf: $1.items.map({ $0.value })) }
     }
     
     public var rootItems: [ItemIdentifierType] {

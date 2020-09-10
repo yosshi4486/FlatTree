@@ -17,7 +17,6 @@ final class FlatTreeTests: XCTestCase {
     func testAppend() {
         var tree = FlatTree<String>()
         tree.append(["a", "b", "c"], to: nil)
-        tree.reindex()
         
         XCTAssertEqual(tree.items.count, 3)
         XCTAssertEqual(tree.items[0], "a")
@@ -25,7 +24,6 @@ final class FlatTreeTests: XCTestCase {
         XCTAssertEqual(tree.items[2], "c")
         
         tree.append(["d"], to: "a")
-        tree.reindex()
 
         // Assert Count
         XCTAssertEqual(tree.items.count, 4)
